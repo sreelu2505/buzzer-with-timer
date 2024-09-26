@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM6w7jD1PRG+7K6Dtb5Z0lW2q6bH0BTF9A60M" crossorigin="anonymous">
+  <title>QUICK FIRE TALENT SHOW</title>
+  <style>
+    /* Centering the content on the screen */
+    html, body {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      background-color: #161616;
+      color: white;
+      font-family: Arial, sans-serif;
+      position: fixed;
+      width:100%;
+    }
+
+    /* Top half styling */
+    .top-half {
+      flex: 3; /* Takes up half of the page */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Bottom half styling */
+    .bottom-half {
+      flex: 2; /* Takes up half of the page */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Styling for the heading with gradient colors */
+    h1 {
+      background: linear-gradient(
+        45deg,
+        #FF0000, #FF7300, #FFFB00, #48FF00,
+        #00FFD5, #002BFF, #FF00C8, #FF0000
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 48px; /* You can adjust the font size as needed */
+      margin: 0; /* Removed margin for better vertical alignment */
+    }
+
+    /* Circular timer styling */
+    #timer {
+      font-size: 60px; /* Increased font size for the timer */
+      margin: 20px 0; /* Margin for spacing */
+      width: 200px; /* Diameter of the circle */
+      height: 200px; /* Diameter of the circle */
+      border-radius: 50%; /* Make it circular */
+      display: flex; /* Flex for centering text */
+      justify-content: center; /* Center text horizontally */
+      align-items: center; /* Center text vertically */
+      background-color: #282c34; /* Background color */
+      color: white; /* Text color */
+      position: relative; /* For glow effect */
+      z-index: 0;
+      overflow: hidden; /* Ensure content fits within */
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Soft shadow effect */
+      transition: all 0.3s ease;
+    }
+
+    /* Button styling */
+    .btn {
+      padding: 15px 30px; /* Increased padding for larger buttons */
+      border: none;
+      outline: none;
+      color: #FFF;
+      cursor: pointer;
+      position: relative;
+      z-index: 0;
+      font-size: 20px; /* Increased font size for better visibility */
+      font-weight: bold;
+      border-radius: 16px; /* Slightly increased border radius */
+      background-color: #282c34;
+      transition: all 0.3s ease;
+      margin: 5px; /* Spacing between buttons */
+    }
+
+    /* Inner shadow effect for buttons and timer */
+    .btn::after, #timer::after {
+      content: "";
+      z-index: -1;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: #333;
+      left: 0;
+      top: 0;
+      border-radius: 10px;
+      transition: background-color 0.3s;
+    }
+
+    /* Glowing effect around buttons and timer */
+    .btn::before, #timer::before {
+      content: "";
+      background: linear-gradient(
+        45deg,
+        #FF0000, #FF7300, #FFFB00, #48FF00,
+        #00FFD5, #002BFF, #FF00C8, #FF0000
+      );
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      background-size: 600%;
+      z-index: -1;
+      width: calc(100% + 4px);
+      height: calc(100% + 4px);
+      filter: blur(8px);
+      animation: glowing 20s linear infinite;
+      transition: opacity .3s ease-in-out;
+      border-radius: 10px;
+      opacity: 0;
+    }
+
+    /* Glowing animation */
+    @keyframes glowing {
+      0% { background-position: 0 0; }
+      50% { background-position: 400% 0; }
+      100% { background-position: 0 0; }
+    }
+
+    /* Hover state: activates the glow */
+    .btn:hover::before, #timer:hover::before {
+      opacity: 1;
+    }
+
+    /* Active state: background turns transparent and text color changes */
+    .btn:active::after, #timer:active::after {
+      background: transparent;
+    }
+
+    .btn:active, #timer:active {
+      color: #000;
+    }
+
+    /* Message display */
+    #message {
+      font-size: 16px;
+      text-align: center;
+      line-height: 1.5;
+      max-width: 90%;
+      margin-top: 20px; /* Added margin for spacing */
+    }
+
+    /* Responsive media query */
+    @media (max-width: 600px) {
+      .btn {
+        font-size: 16px; /* Adjusted font size for small screens */
+        padding: 12px 24px; /* Adjust padding for small screens */
+      }
+      #timer {
+        font-size: 40px; /* Adjusted timer font size for small screens */
+        width: 150px; /* Smaller diameter for small screens */
+        height: 150px; /* Smaller diameter for small screens */
+      }
+    }
+
+    /* Balloon and confetti styles */
+    .balloon {
+      position: absolute;
+      animation: float 5s linear infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-300px); }
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0.8;
+      animation: fall linear infinite;
+      top: -10px;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(100vh); }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-half">
+    <h1>QUICKFIRE TALENT SHOW</h1>
+    <div id="timer">01:40</div> <!-- Timer display in MM:SS format -->
+    <div class="button-container">
+      <button class="btn" id="start-btn"><i class="fas fa-play"></i> Start</button>
+      <button class="btn" id="resume-btn"><i class="fas fa-redo"></i> Resume</button>
+      <button class="btn" id="stop-btn"><i class="fas fa-stop"></i> Stop</button>
+    </div>  
+  </div>
+  <div class="bottom-half">
+    <div class="button-container">
+      <button class="btn" data-judge="Judge 1">Judge 1</button>
+      <button class="btn" data-judge="Judge 2">Judge 2</button>
+      <button class="btn" data-judge="Judge 3">Judge 3</button>
+      <button class="btn" data-judge="Judge 4">Judge 4</button>
+      <button class="btn" data-judge="Judge 5">Judge 5</button>
+    </div>
+    <div id="message"></div>
+  </div>
+
+  <!-- Buzzer sound -->
+  <audio id="buzzer-sound" src="C:\Users\sreel\Downloads\buzzer-of-car-wash-107990.mp3"></audio>
+  <audio id="confetti-sound" src="C:\Users\sreel\Downloads\tada-fanfare-a-6313.mp3"></audio>
+  <audio id="timer-end-sound" src="C:\Users\sreel\Downloads\race-start-beeps-125125.mp3"></audio> <!-- Add your timer end sound -->
+
+  <script>
+    const buttons = document.querySelectorAll('.btn[data-judge]');
+    const messageDisplay = document.getElementById('message');
+    const buzzerSound = document.getElementById('buzzer-sound');
+    const confettiSound = document.getElementById('confetti-sound');
+    const timerEndSound = document.getElementById('timer-end-sound');
+    const judgesPressed = []; // Array to keep track of which judges have pressed
+
+    // Timer Logic
+    let timeLeft = 100; // Set the initial countdown time in seconds
+    let timerInterval;
+    const timerDisplay = document.getElementById('timer');
+
+    function updateTimerDisplay() {
+      // Calculate minutes and seconds
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      timerDisplay.innerHTML = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`; // Update the timer display
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval); // Clear any existing intervals
+      timerInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval); // Stop the timer
+          timerEndSound.currentTime = 0; // Reset sound to start
+          timerEndSound.play(); // Play the timer end sound
+        } else {
+          timeLeft--; // Decrement time left
+          updateTimerDisplay(); // Update the timer display
+        }
+      }, 1000); // Update every second
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval); // Stop the timer
+    }
+
+    function resumeTimer() {
+      startTimer(); // Resume the timer
+    }
+
+    // Event listeners for timer controls
+    document.getElementById('start-btn').addEventListener('click', startTimer);
+    document.getElementById('stop-btn').addEventListener('click', stopTimer);
+    document.getElementById('resume-btn').addEventListener('click', resumeTimer);
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        buzzerSound.currentTime = 0; // Reset sound to start
+        buzzerSound.play(); // Play buzzer sound
+
+        // Add the judge to the list if not already pressed
+        const judgeName = button.getAttribute('data-judge');
+        if (!judgesPressed.includes(judgeName)) {
+          judgesPressed.push(judgeName); // Add judge name to the array
+        }
+
+        // Retain glow effect and disable button to prevent re-clicking
+        button.classList.add('glow');
+        button.disabled = true; 
+
+        // Update the message display with the latest judge that pressed the buzzer
+        const messageColor = `linear-gradient(
+          45deg,
+          #FF0000, #FF7300, #FFFB00, #48FF00,
+          #00FFD5, #002BFF, #FF00C8, #FF0000
+        )`;
+        messageDisplay.innerHTML += `<span style="background: ${messageColor}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Woohoo, near to the flurry of confetti! ${judgeName} hits the buzzer!!</span><br/>`;
+
+        // Check if all judges have pressed their buttons
+        if (judgesPressed.length === buttons.length) {
+          showCelebration(); // Show celebration if all judges pressed their buttons
+        }
+      });
+    });
+
+    function showCelebration() {
+      // Create confetti
+      for (let i = 0; i < 300; i++) { // You can adjust the number of confetti pieces
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = `${Math.random() * 100}vw`;
+
+        // Randomly assign color
+        confetti.style.backgroundColor = Math.random() < 0.5 ? 'gold' : 'black'; // Gold or Black
+        
+        // Randomize animation duration
+        confetti.style.animationDuration = `${Math.random() * 2 + 3}s`;
+         
+        document.body.appendChild(confetti);
+      }
+      confettiSound.currentTime = 0; // Reset sound to start
+      confettiSound.play(); // Play confetti sound
+    }
+
+    // Initialize timer display
+    updateTimerDisplay();
+  </script>
+</body>
+</html>
